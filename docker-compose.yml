@@ -1,0 +1,10 @@
+name: xlsx_to_sql
+
+services:
+  app:
+    build: .
+    env_file:
+      - docker-compose.env
+    volumes:
+      - .:/app
+      - ./tmp:/var/lib/mysql
