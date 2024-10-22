@@ -21,6 +21,7 @@ class Conf:
 		self.col_server = conf.get("col.server")
 		self.col_name = conf.get("col.name")
 		self.col_cdkey = conf.get("col.cdkey")
+		self.col_expire = conf.get("col.expire") or 0
 		self.sql_table = conf.get("sql.table")
 		self.sql_len = conf.get("sql.len")
 		self.time = time.strftime("%Y-%m-%d_%H-%M-%S", time.localtime())
@@ -47,8 +48,9 @@ def check_conf(c: Conf, x: IReader) -> None:
 		raise Exception(f"打开输入表格{c.input_file_name}失败")
 
 	col_max = x.get_max_column()
-	if col_max < max(c.col_server, c.col_name, c.col_cdkey):
-		raise Exception(f"配置错误, 输入表格最大列数: {col_max}, 配置文件需要列数:{max(c.col_server, c.col_name, c.col_cdkey)}")
+	conf_max = max(c.col_server, c.col_name, c.col_cdkey, c.col_expire)
+	if col_max < conf_max:
+		raise Exception(f"配置错误, 输入表格最大列数: {col_max}, 配置文件需要列数:{conf_max}")
 
 
 def create_table(c: Conf) -> str:
@@ -79,22 +81,25 @@ def make_sqls(c: Conf, x: IReader) -> List[str]:
 		s = x.get_value(row_index, c.col_server)
 		n = str(x.get_value(row_index, c.col_name)).replace(" ", "")
 		k = x.get_value(row_index, c.col_cdkey)
+		e = c.time
+		if c.col_expire > 0:
+			e = x.get_value(row_index, c.col_expire)
 
 		# 重复数据检查
 		d_k = f"{s}-{n}"
 		duplicate_datas.setdefault(d_k, [])
-		if len(duplicate_datas[d_k]) > 0: # TODO: 这里先自动排除掉重复项
+		if len(duplicate_datas[d_k]) > 0: # 这里自动排除掉重复项
 			print(f"重复的数据: serverID: {s}, name: {n}, cdkey: {k}")
 			continue
 		duplicate_datas[d_k].append(k)
 
-		values.append(f'("{s}", "{n}", "{k}")')
+		values.append(f'("{s}", "{n}", "{k}", "{e}")')
 		if len(values) >= c.sql_len:
-			sqls.append(f"insert into {c.sql_table} (server_id, role_name, cd_key) values {', '.join(values)};")
+			sqls.append(f"insert into {c.sql_table} (server_id, role_name, cd_key, expire_date) values {', '.join(values)};")
 			values.clear()
 
 	if len(values) > 0:
-		sqls.append(f"insert into {c.sql_table} (server_id, role_name, cd_key) values {', '.join(values)};")
+		sqls.append(f"insert into {c.sql_table} (server_id, role_name, cd_key, expire_date) values {', '.join(values)};")
 		values.clear()
 
 	return sqls

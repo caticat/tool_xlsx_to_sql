@@ -6,7 +6,7 @@
 # in: nickname_list.txt
 in: nickname_list.csv
 
-# cdkey过期时间
+# 默认的cdkey过期时间
 expire_date: "2024-12-31 23:59:59"
 
 # 行列数从1开始
@@ -14,11 +14,12 @@ expire_date: "2024-12-31 23:59:59"
 row:
   begin: 1
 
-# 表格中数据所在列
+# 表格中数据所在列, 其中`expire`可选
 col:
   server: 3
   name: 1
   cdkey: 2
+  expire: 4
 
 # ==============================
 # 非常用配置
