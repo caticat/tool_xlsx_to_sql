@@ -3,7 +3,8 @@
 # ==============================
 # 输入文件表格, 支持xlsx,txt和csv格式(txt也是csv格式)
 # in: 昵称抢注情况.xlsx
-in: nickname_list.txt
+# in: nickname_list.txt
+in: nickname_list.csv
 
 # cdkey过期时间
 expire_date: "2024-12-31 23:59:59"

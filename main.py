@@ -106,11 +106,15 @@ def write_sqls(c: Conf, sqls: List[str]) -> None:
 
 
 def import_msyql(filename: str) -> None:
-	os.system(f"mysql -uroot -p{os.getenv('MYSQL_ROOT_PASSWORD')} {os.getenv('MYSQL_DATABASE')} -e \"source {filename}\"")
+	exit_code = os.system(f"mysql -uroot -p{os.getenv('MYSQL_ROOT_PASSWORD')} {os.getenv('MYSQL_DATABASE')} -e \"source {filename}\"")
+	if exit_code != 0:
+		raise Exception("导入数据库失败")
 
 
 def export_mysql(filename: str) -> None:
-	os.system(f"mysqldump -uroot -p{os.getenv('MYSQL_ROOT_PASSWORD')} --result-file={filename} {os.getenv('MYSQL_DATABASE')}")
+	exit_code = os.system(f"mysqldump -uroot -p{os.getenv('MYSQL_ROOT_PASSWORD')} --result-file={filename} {os.getenv('MYSQL_DATABASE')}")
+	if exit_code != 0:
+		raise Exception("导出数据库失败")
 
 
 def main():
