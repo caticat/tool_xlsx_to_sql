@@ -8,12 +8,12 @@ from openpyxl.utils.exceptions import InvalidFileException
 from openpyxl.workbook import Workbook
 from openpyxl.worksheet.worksheet import Worksheet
 
-from utils.ireader import CSVInterface
+from utils.ireader import IReader
 
 logger = logging.getLogger(__name__) # 放置在模块顶部
 
 
-class Xlsx(CSVInterface):
+class Xlsx(IReader):
 	"""xlsx解析封装
 	默认打开第一个sheet
 	无错误处理,可能会抛出异常

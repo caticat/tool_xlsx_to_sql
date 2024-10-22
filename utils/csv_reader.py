@@ -1,10 +1,10 @@
 import csv
 from typing import Any
 
-from utils.ireader import CSVInterface
+from utils.ireader import IReader
 
 
-class CSVReader(CSVInterface):
+class CSVReader(IReader):
 
 	def __init__(self, file_path: str):
 		self.data = []

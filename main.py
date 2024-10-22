@@ -5,7 +5,7 @@ from typing import List
 
 from utils.csv_reader import CSVReader
 from utils.file_storage import YamlStorage
-from utils.ireader import CSVInterface
+from utils.ireader import IReader
 from utils.perf_timer import PerfTimer
 from utils.xlsx import Xlsx
 
@@ -34,7 +34,7 @@ class Conf:
 		return os.path.join(os.getcwd(), self.assets, f"{os.path.splitext(self.__input_file_name)[0]}.{self.time}.sql")
 
 
-def open_input_file(c: Conf) -> CSVInterface:
+def open_input_file(c: Conf) -> IReader:
 	input_file_name = c.input_file_name
 	if input_file_name.endswith(".xlsx") or input_file_name.endswith(".xls"):
 		return Xlsx(c.input_file_name)
@@ -42,7 +42,7 @@ def open_input_file(c: Conf) -> CSVInterface:
 		return CSVReader(c.input_file_name)
 
 
-def check_conf(c: Conf, x: CSVInterface) -> None:
+def check_conf(c: Conf, x: IReader) -> None:
 	if not x.is_open():
 		raise Exception(f"打开输入表格{c.input_file_name}失败")
 
@@ -68,7 +68,7 @@ CREATE TABLE `{c.sql_table}` (
 """
 
 
-def make_sqls(c: Conf, x: CSVInterface) -> List[str]:
+def make_sqls(c: Conf, x: IReader) -> List[str]:
 	sqls: List[str] = []
 	sqls.append(create_table(c))
 

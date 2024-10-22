@@ -3,7 +3,7 @@ from typing import Any
 
 
 # 定义接口
-class CSVInterface(ABC):
+class IReader(ABC):
 
 	@abstractmethod
 	def is_open(self) -> bool:
