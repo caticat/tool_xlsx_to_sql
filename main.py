@@ -81,7 +81,7 @@ def make_sqls(c: Conf, x: IReader) -> List[str]:
 		s = x.get_value(row_index, c.col_server)
 		n = str(x.get_value(row_index, c.col_name)).replace(" ", "")
 		k = x.get_value(row_index, c.col_cdkey)
-		e = c.time
+		e = c.expire_date
 		if c.col_expire > 0:
 			e = x.get_value(row_index, c.col_expire)
 
