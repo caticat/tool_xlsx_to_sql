@@ -8,9 +8,10 @@ set -u
 
 RED="\033[0;31m"
 GREEN="\033[0;32m"
+BLUE="\033[0;34m"
 END="\033[0;00m"
 
-echo "启动容器"
+echo -e "${BLUE}启动容器${END}"
 mkdir -p ./tmp
 docker-compose up -d
 echo -e "${GREEN}启动容器完成${END}"
@@ -27,7 +28,7 @@ sleep 10
 echo ""
 echo -e "${GREEN}数据库准备完毕${END}"
 
-echo "开始导入表格数据到数据库"
+echo -e "${BLUE}开始导入表格数据到数据库${END}"
 docker exec $container_name python3 main.py
 if [ $? -ne 0 ]; then
 	echo -e "${RED}导入数据库失败${END}"
@@ -35,6 +36,6 @@ else
 	echo -e "${GREEN}导入数据库完成${END}"
 fi
 
-echo "停止容器"
+echo -e "${BLUE}停止容器${END}"
 docker-compose stop
 echo -e "${GREEN}停止容器完成${END}"
