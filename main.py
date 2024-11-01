@@ -39,8 +39,10 @@ def open_input_file(c: Conf) -> IReader:
 	input_file_name = c.input_file_name
 	if input_file_name.endswith(".xlsx") or input_file_name.endswith(".xls"):
 		return Xlsx(c.input_file_name)
-	else:
+	elif input_file_name.endswith(".csv") or input_file_name.endswith(".txt"):
 		return CSVReader(c.input_file_name)
+	else:
+		raise Exception(f"不支持的文件类型: {input_file_name}, 请使用.xls, .xlsx, .csv, .txt")
 
 
 def check_conf(c: Conf, x: IReader) -> None:
@@ -110,7 +112,7 @@ def write_sqls(c: Conf, sqls: List[str]) -> None:
 		fp.writelines("\n".join(sqls))
 
 
-def import_msyql(filename: str) -> None:
+def import_mysql(filename: str) -> None:
 	os.putenv("MYSQL_PWD", os.getenv('MYSQL_ROOT_PASSWORD') or "")
 	exit_code = os.system(f"mysql -uroot {os.getenv('MYSQL_DATABASE')} -e \"source {filename}\"")
 	if exit_code != 0:
@@ -124,16 +126,21 @@ def export_mysql(filename: str) -> None:
 
 
 def main():
-	p = PerfTimer()
-	c = Conf()
-	x = open_input_file(c)
-	check_conf(c, x)
-	sqls = make_sqls(c, x)
-	write_sqls(c, sqls)
-	import_msyql(c.output_file_name)
-	export_mysql(c.output_file_name)
+	try:
+		p = PerfTimer()
+		c = Conf()
+		x = open_input_file(c)
+		check_conf(c, x)
+		sqls = make_sqls(c, x)
+		write_sqls(c, sqls)
+		import_mysql(c.output_file_name)
+		export_mysql(c.output_file_name)
 
-	print(f"生成完成, 总耗时: {p.tick()} 秒")
+		print(f"生成完成, 总耗时: {p.tick()} 秒")
+	except KeyboardInterrupt:
+		print("用户中断")
+	except Exception as e:
+		print(f"发生异常: {e}")
 
 
 if __name__ == "__main__":
